@@ -1,0 +1,32 @@
+{
+    "name": "hashbangcode/curl_converter",
+    "description": "A library to convert curl commands into different formats.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Philip Norton",
+            "email": "philipnorton42@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require" : {
+        "php": ">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "9.5.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hashbangcode\\CurlConverter\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Hashbangcode\\CurlConverter\\Test\\": "test"
+        }
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit"
+    }
+}
