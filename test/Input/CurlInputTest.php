@@ -64,6 +64,10 @@ EOD;
     $this->assertEquals('https://www.example.com/example-from', $curlParameters->getUrl());
     $this->assertStringContainsString('text=grfg&op=Rot13&form_build_id=form-F7yTHeY6UrAhh28TFR0ciNAXORC-uqg-ZVeflBPZ5O4&form_token=U4zfxzaKXfUFJzX63L1c4u3dmLu9jVnXMwYVruAxWY8&form_id=example-from', $curlParameters->getData());
     $this->assertTrue($curlParameters->isInsecure());
+    $headers = $curlParameters->getHeaders();
+    $this->assertEquals('Connection: keep-alive', $headers[0]);
+    $this->assertEquals('Cache-Control: max-age=0', $headers[1]);
+    $this->assertEquals('Upgrade-Insecure-Requests: 1', $headers[2]);
   }
 
   public function testCurlInputCoppiedFromChrome()

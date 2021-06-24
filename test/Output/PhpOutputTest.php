@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: philipnorton42
- * Date: 13/06/2021
- * Time: 12:32
- */
 
 namespace Hashbangcode\CurlConverter\Output\Test;
 
@@ -47,7 +41,7 @@ class PhpOutputTest extends TestCase
     $this->assertStringContainsString('CURLOPT_SSL_VERIFYPEER, false', $output);
   }
 
-  public function test()
+  public function testFollowLocation()
   {
     $curlParameters = new CurlParameters();
     $curlParameters->setUrl('https://www.hashbangcode.com/');
@@ -57,5 +51,29 @@ class PhpOutputTest extends TestCase
     $output = $phpOutput->render($curlParameters);
 
     $this->assertStringContainsString('CURLOPT_FOLLOWLOCATION, true', $output);
+  }
+
+  public function testOutputHasData()
+  {
+    $curlParameters = new CurlParameters();
+    $curlParameters->setUrl('https://www.hashbangcode.com/');
+    $curlParameters->setData('key=value');
+
+    $phpOutput = new PhpOutput();
+    $output = $phpOutput->render($curlParameters);
+
+    $this->assertStringContainsString('CURLOPT_POSTFIELDS, "key=value', $output);
+  }
+
+  public function testHttpVerb()
+  {
+    $curlParameters = new CurlParameters();
+    $curlParameters->setUrl('https://www.hashbangcode.com/');
+    $curlParameters->setHttpVerb('PUT');
+
+    $phpOutput = new PhpOutput();
+    $output = $phpOutput->render($curlParameters);
+
+    $this->assertStringContainsString('CURLOPT_CUSTOMREQUEST, "PUT"', $output);
   }
 }

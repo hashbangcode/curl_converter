@@ -27,14 +27,18 @@ class PhpOutput implements OutputInterface
     $output .= 'curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);' . PHP_EOL;
 
     if ($curlParameters->followRedirects()) {
-      $output .= 'curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);';
+      $output .= 'curl_setopt($curl_handle, CURLOPT_FOLLOWLOCATION, true);';
     }
 
     switch ($curlParameters->getHttpVerb()) {
       case 'POST':
         $output .= 'curl_setopt($curl_handle, CURLOPT_POST, 1);' . PHP_EOL;
         break;
+      default:
+        $output .= 'curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "' . $curlParameters->getHttpVerb() . '");' . PHP_EOL;
     }
+
+    $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . $curlParameters->getData() . '");' . PHP_EOL;
 
     $headers = $curlParameters->getHeaders();
     if (count($headers) > 0) {
@@ -60,6 +64,8 @@ class PhpOutput implements OutputInterface
     $output .= '}' . PHP_EOL;
 
     $output .= 'curl_close($curl_handle);' . PHP_EOL;
+
+    $output .= 'echo $result;';
 
     return $output;
   }

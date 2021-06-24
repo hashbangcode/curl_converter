@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: philipnorton42
- * Date: 13/06/2021
- * Time: 12:32
- */
 
 namespace Hashbangcode\CurlConverter\Test;
 
@@ -15,7 +9,8 @@ use Hashbangcode\CurlConverter\CurlConverter;
 
 class CurlConverterTest extends TestCase
 {
-  public function testCurlCommandToPhpOutput() {
+  public function testCurlCommandToPhpOutput()
+  {
     $command = 'curl https://www.example.com/';
 
     $input = new CurlInput();

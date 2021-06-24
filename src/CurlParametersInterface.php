@@ -65,6 +65,14 @@ interface CurlParametersInterface {
   public function setData(string $data): CurlParametersInterface;
 
   /**
+   * Is data present in the object.
+   *
+   * @return bool
+   *   True if data is present.
+   */
+  public function hasData(): bool;
+
+  /**
    * Get the HTTP verb of the request.
    *
    * @return string

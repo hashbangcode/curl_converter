@@ -113,6 +113,14 @@ class CurlParameters implements CurlParametersInterface
   /**
    * {@inheritdoc}
    */
+  public function hasData(): bool
+  {
+    return (strlen($this->getData()) > 0) ?  TRUE : FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getHttpVerb(): string
   {
     return $this->httpVerb;

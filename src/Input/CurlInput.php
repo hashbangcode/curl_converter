@@ -46,10 +46,11 @@ class CurlInput implements InputInterface
             break;
           case 'H':
           case 'headers':
+            $contents = trim(str_replace(["'", '\\'], '', $contents));
             $headers[] = $contents;
             break;
           case 'X':
-            $curlParameters->setHttpVerb($contents);
+            $curlParameters->setHttpVerb(strtoupper($contents));
             break;
           case 'u':
           case 'user':
@@ -63,8 +64,6 @@ class CurlInput implements InputInterface
           case 'data-raw':
           case 'data-urlencode':
           case 'data-binary':
-            //var_dump($flag);
-            //var_dump($contents);
             $curlParameters->setHttpVerb('POST');
             $curlParameters->setData($contents);
             break;
