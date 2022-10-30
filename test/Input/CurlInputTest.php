@@ -123,4 +123,26 @@ EOD;
     $this->assertEquals('https://www.example.com', $curlParameters->getUrl());
     $this->assertTrue($curlParameters->followRedirects());
   }
+
+  public function testCurlCoppiedFromPostman() {
+    $curlString = <<<EOD
+curl --location --request POST 'http://fiddle.jshell.net/echo/html/' \
+  --header 'Origin: http://fiddle.jshell.net' \
+  --header 'Accept-Encoding: gzip, deflate' \
+  --header 'Accept-Language: en-US,en;q=0.8' \
+  --header 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1' \
+  --header 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' \
+  --header 'Accept: */*' \
+  --header 'Referer: http://fiddle.jshell.net/_display/' \
+  --header 'X-Requested-With: XMLHttpRequest' \
+  --header 'Connection: keep-alive' \
+  --data-raw 'msg1=wow&msg2=such&msg3=data'
+EOD;
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+
+    $this->assertEquals('http://fiddle.jshell.net/echo/html/', $curlParameters->getUrl());
+    $this->assertEquals('POST', $curlParameters->getHttpVerb());
+    $this->assertEquals(9, count($curlParameters->getHeaders()));
+  }
 }

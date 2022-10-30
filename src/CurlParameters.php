@@ -115,6 +115,9 @@ class CurlParameters implements CurlParametersInterface
    */
   public function hasData(): bool
   {
+    if ($this->getData() == NULL) {
+      return FALSE;
+    }
     return (strlen($this->getData()) > 0) ?  TRUE : FALSE;
   }
 

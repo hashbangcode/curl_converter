@@ -32,7 +32,14 @@ class CurlInput implements InputInterface
     $data = substr(trim($data), 5);
 
     // Match parameters.
-    preg_match_all('/(--[a-zA-Z\-]+ \'?.*?\'?[\s])|(--[a-zA-Z\-]+)|(-[a-zA-Z\-]+? \'?.*[\s]\'?)|(\'?[a-z]+:\/\/.*?\'+?)|("?[a-z]+:\/\/.*?"+?)|(-[a-aA-Z]+)/', $data, $parameters);
+    $regex = '';
+    $regex .= '(-[a-zA-Z\-]+? \'?.*[\s]\'?)|'; // Single letter flags with values.
+    $regex .= '(--[a-zA-Z\-]+ \'?.*?\'?[\s])|'; // Multi letter flags with values.
+    $regex .= '("?[a-z]+:\/\/.*?"+?)|'; // Address matching with double quotes.
+    $regex .= '(\'?[a-z]+:\/\/.*?\'+?)|'; // Address matching with single quotes.
+    $regex .= '(--[a-zA-Z\-]+)|'; // Multi letter flags with no value.
+    $regex .= '(-[a-aA-Z]+)'; // Single letter flags with no value.
+    preg_match_all('/' . $regex . '/', $data, $parameters);
 
     $parameters = $parameters[0];
     $parameterCount = count($parameters);
@@ -45,6 +52,7 @@ class CurlInput implements InputInterface
             $curlParameters->setUrl($contents);
             break;
           case 'H':
+          case 'header':
           case 'headers':
             $contents = trim(str_replace(["'", '\\'], '', $contents));
             $headers[] = $contents;
