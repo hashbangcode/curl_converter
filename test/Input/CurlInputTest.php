@@ -144,5 +144,7 @@ EOD;
     $this->assertEquals('http://fiddle.jshell.net/echo/html/', $curlParameters->getUrl());
     $this->assertEquals('POST', $curlParameters->getHttpVerb());
     $this->assertEquals(9, count($curlParameters->getHeaders()));
+    $this->assertEquals('Origin: http://fiddle.jshell.net', $curlParameters->getHeaders()[0]);
+    $this->assertEquals('msg1=wow&msg2=such&msg3=data', $curlParameters->getData());
   }
 }

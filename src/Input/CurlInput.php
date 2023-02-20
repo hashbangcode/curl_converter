@@ -34,7 +34,7 @@ class CurlInput implements InputInterface
     // Match parameters.
     $regex = '';
     $regex .= '(-[a-zA-Z\-]+? \'?.*[\s]\'?)|'; // Single letter flags with values.
-    $regex .= '(--[a-zA-Z\-]+ \'?.*?\'?[\s])|'; // Multi letter flags with values.
+    $regex .= '(--[a-zA-Z\-]+ \'?.*\'?[\s]?)|'; // Multi letter flags with values.
     $regex .= '("?[a-z]+:\/\/.*?"+?)|'; // Address matching with double quotes.
     $regex .= '(\'?[a-z]+:\/\/.*?\'+?)|'; // Address matching with single quotes.
     $regex .= '(--[a-zA-Z\-]+)|'; // Multi letter flags with no value.
@@ -73,6 +73,7 @@ class CurlInput implements InputInterface
           case 'data-urlencode':
           case 'data-binary':
             $curlParameters->setHttpVerb('POST');
+            $contents = trim(str_replace(["'", '\\'], '', $contents));
             $curlParameters->setData($contents);
             break;
           case 'insecure':
