@@ -20,8 +20,7 @@ class CurlInput implements InputInterface
   {
     $data = trim($data);
     if (strpos($data, 'curl ') !== 0) {
-      // @todo : refactor this into a method and a throwable error
-      die('not a curl command');
+      throw new \InvalidArgumentException('Not a CURL command.');
     }
 
     $curlParameters = new CurlParameters();

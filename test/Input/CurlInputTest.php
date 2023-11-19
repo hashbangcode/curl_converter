@@ -7,6 +7,14 @@ use Hashbangcode\CurlConverter\Input\CurlInput;
 
 class CurlInputTest extends TestCase
 {
+  public function testBrokenCurlCommand()
+  {
+    $this->expectException('InvalidArgumentException');
+    $notCurlString = 'monkey https://www.example.com';
+    $input = new CurlInput();
+    $curlParameters = $input->extract($notCurlString);
+  }
+
   public function testCurlInputWithSimpleCommand()
   {
     $curlString = "curl https://www.example.com/";
@@ -167,6 +175,8 @@ EOD;
     $this->assertEquals('username', $curlParameters->getUsername());
     $this->assertEquals('password', $curlParameters->getPassword());
     $this->assertEquals('POST', $curlParameters->getHttpVerb());
+    $this->assertEquals('Content-Type: application/json', $curlParameters->getHeaders()[0]);
+    $this->assertEquals('{"key1":"value1", "key2":"value2"}', $curlParameters->getData());
     $this->assertEquals('http://proxy.example.com:8080', $curlParameters->getProxy());
     $this->assertEquals('https://example.com/api/resource', $curlParameters->getUrl());
   }
