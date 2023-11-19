@@ -25,6 +25,7 @@ interface CurlParametersInterface {
    *   The URL.
    *
    * @return CurlParametersInterface
+   *   The current object.
    */
   public function setUrl(string $url): CurlParametersInterface;
 
@@ -43,8 +44,20 @@ interface CurlParametersInterface {
    *   The headers to set.
    *
    * @return CurlParametersInterface
+   *   The current object.
    */
   public function setHeaders(array $headers): CurlParametersInterface;
+
+  /**
+   * Add a header to the header list.
+   *
+   * @param string $header
+   *   The header to add.
+   *
+   * @return CurlParametersInterface
+   *   The current object.
+   */
+  public function addHeader(string $header): CurlParametersInterface;
 
   /**
    * Get the data payload of the request.
@@ -171,4 +184,23 @@ interface CurlParametersInterface {
    *   True if redirects are to be followed.
    */
   public function followRedirects() : bool;
+
+  /**
+   * Get the proxy value.
+   *
+   * @return mixed
+   *   The proxy value.
+   */
+  public function getProxy();
+
+  /**
+   * Set the proxy value.
+   *
+   * @param mixed $proxy
+   *   The proxy value.
+   *
+   * @return CurlParametersInterface
+   *   The current object.
+   */
+  public function setProxy(string $proxy): CurlParametersInterface;
 }
