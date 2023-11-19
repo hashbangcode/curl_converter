@@ -76,4 +76,17 @@ class PhpOutputTest extends TestCase
 
     $this->assertStringContainsString('CURLOPT_CUSTOMREQUEST, "PUT"', $output);
   }
+
+  public function testUsernameAndPasswordSetOutput()
+  {
+    $curlParameters = new CurlParameters();
+    $curlParameters->setUrl('https://www.hashbangcode.com/');
+    $curlParameters->setUsername('somename');
+    $curlParameters->setPassword('somepassword');
+
+    $phpOutput = new PhpOutput();
+    $output = $phpOutput->render($curlParameters);
+
+    $this->assertStringContainsString('($ch, CURLOPT_USERPWD, "somename:somepassword"', $output);
+  }
 }

@@ -7,7 +7,7 @@ use Hashbangcode\CurlConverter\CurlParametersInterface;
 /**
  * Class PhpOutput.
  *
- * @package Hashbangcode\CurlConverter\Input
+ * @package Hashbangcode\CurlConverter\Output
  */
 class PhpOutput implements OutputInterface
 {
@@ -54,7 +54,7 @@ class PhpOutput implements OutputInterface
     }
 
     if ($curlParameters->areCredentialsSet()) {
-      $output .= 'curl_setopt($ch, CURLOPT_USERPWD, "username:password");' . PHP_EOL;
+      $output .= 'curl_setopt($ch, CURLOPT_USERPWD, "' . $curlParameters->getUsername() . ':' . $curlParameters->getPassword() . '");' . PHP_EOL;
     }
 
     $output .= '$result = curl_exec($curl_handle);' . PHP_EOL;
