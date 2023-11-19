@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: philipnorton42
- * Date: 13/06/2021
- * Time: 12:32
- */
 
 namespace Hashbangcode\CurlConverter\Input\Test;
 
@@ -39,6 +33,21 @@ class CurlInputTest extends TestCase
     $this->assertEquals('username', $curlParameters->getUsername());
     $this->assertEquals('password', $curlParameters->getPassword());
     $this->assertEquals('https://www.example.com/', $curlParameters->getUrl());
+  }
+
+  public function testMultilineCurlCommand()
+  {
+    $curlString = <<<EOD
+curl 'https://www.example.com/example-from' \
+  -X DELETE
+  --compressed \
+  --insecure
+EOD;
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+    $this->assertEquals('DELETE', $curlParameters->getHttpVerb());
+    $this->assertEquals('https://www.example.com/example-from', $curlParameters->getUrl());
+    $this->assertTrue($curlParameters->isInsecure());
   }
 
   public function testCurlInputWithDataPostCommand()
@@ -101,7 +110,7 @@ EOD;
     $curlString = 'curl -sSLIXGET https://www.example.com';
     $input = new CurlInput();
     $curlParameters = $input->extract($curlString);
-    $this->assertEquals('GET', $curlParameters->getHttpVerb());
+    $this->assertEquals('HEAD', $curlParameters->getHttpVerb());
     $this->assertEquals('https://www.example.com', $curlParameters->getUrl());
   }
 
@@ -124,7 +133,7 @@ EOD;
     $this->assertTrue($curlParameters->followRedirects());
   }
 
-  public function testCurlCoppiedFromPostman() {
+  public function testCurlCopiedFromPostman() {
     $curlString = <<<EOD
 curl --location --request POST 'http://fiddle.jshell.net/echo/html/' \
   --header 'Origin: http://fiddle.jshell.net' \
@@ -146,5 +155,31 @@ EOD;
     $this->assertEquals(9, count($curlParameters->getHeaders()));
     $this->assertEquals('Origin: http://fiddle.jshell.net', $curlParameters->getHeaders()[0]);
     $this->assertEquals('msg1=wow&msg2=such&msg3=data', $curlParameters->getData());
+  }
+
+  public function testExtensiveCurlCommand() {
+    $curlString = <<<EOD
+curl -X POST -H "Content-Type: application/json" -d '{"key1":"value1", "key2":"value2"}' --insecure --user username:password --proxy http://proxy.example.com:8080 https://example.com/api/resource
+EOD;
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+
+    $this->assertEquals('username', $curlParameters->getUsername());
+    $this->assertEquals('password', $curlParameters->getPassword());
+    $this->assertEquals('POST', $curlParameters->getHttpVerb());
+    $this->assertEquals('http://proxy.example.com:8080', $curlParameters->getProxy());
+    $this->assertEquals('https://example.com/api/resource', $curlParameters->getUrl());
+  }
+
+  public function testSettingDataDoesNotChangeVerbToPost() {
+    $curlString = <<<EOD
+curl --request PUT 'https://www.example.com/test' --data 'somedata=123'
+EOD;
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+
+    $this->assertEquals('https://www.example.com/test', $curlParameters->getUrl());
+    $this->assertEquals('PUT', $curlParameters->getHttpVerb());
+    $this->assertEquals('somedata=123', $curlParameters->getData());
   }
 }

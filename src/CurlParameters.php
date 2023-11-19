@@ -60,6 +60,13 @@ class CurlParameters implements CurlParametersInterface
   protected $followRedirects = false;
 
   /**
+   * The proxy data.
+   *
+   * @var string
+   */
+  protected $proxy;
+
+  /**
    * {@inheritdoc}
    */
   public function getUrl(): ?string
@@ -90,6 +97,15 @@ class CurlParameters implements CurlParametersInterface
   public function setHeaders(array $headers): CurlParametersInterface
   {
     $this->headers = $headers;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addHeader(string $header): CurlParametersInterface
+  {
+    $this->headers[] = $header;
     return $this;
   }
 
@@ -216,4 +232,22 @@ class CurlParameters implements CurlParametersInterface
   {
     return $this->followRedirects;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProxy()
+  {
+    return $this->proxy;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setProxy(string $proxy): CurlParametersInterface
+  {
+    $this->proxy = $proxy;
+    return $this;
+  }
+
 }
