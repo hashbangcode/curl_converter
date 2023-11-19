@@ -37,7 +37,6 @@ class CurlInput implements InputInterface
       if (substr_compare($flag, '-', 0, 1) === 0) {
         $flag = substr($flag, 1);
       }
-
       $flag = trim($flag);
 
       if (strpos($flag, ' ') === false) {
@@ -120,38 +119,9 @@ class CurlInput implements InputInterface
         preg_match('/"([^"]+)\"/U', $flag, $flagContents);
         $flagKey = trim(str_replace($flagContents[0], '', $flag));
         $flagContents = $flagContents[1];
-        switch ($flagKey) {
-          case 'H':
-          case 'header':
-          case 'headers':
-            $contents = trim(str_replace(["'", '\\'], '', $flagContents));
-            $curlParameters->addHeader($contents);
-            break;
-          case 'u':
-          case 'user':
-            $credentials = explode(':', $flagContents);
-            $curlParameters->setUsername($credentials[0]);
-            $curlParameters->setPassword($credentials[1]);
-            break;
-          case 'data':
-          case 'data-ascii':
-          case 'd':
-          case 'data-raw':
-          case 'data-urlencode':
-          case 'data-binary':
-            if ($curlParameters->getHttpVerb() === 'GET') {
-              $curlParameters->setHttpVerb('POST');
-            }
-            $contents = trim(str_replace(["'", '\\'], '', $flagContents));
-            $curlParameters->setData($contents);
-            break;
-          case 'proxy':
-            $curlParameters->setProxy($flagContents);
-            break;
-          case 'url':
-            $curlParameters->setUrl($flagContents);
-            break;
-        }
+
+        $this->extractQuotedParams($curlParameters, $flagKey, $flagContents);
+
         $data = str_replace($flagKey . ' "' . $flagContents . '"', '', $data);
         continue;
       }
@@ -161,38 +131,9 @@ class CurlInput implements InputInterface
         preg_match('/\'([^\']+)\'/U', $flag, $flagContents);
         $flagKey = trim(str_replace($flagContents[0], '', $flag));
         $flagContents = $flagContents[1];
-        switch ($flagKey) {
-          case 'H':
-          case 'header':
-          case 'headers':
-            $contents = trim(str_replace(["'", '\\'], '', $flagContents));
-            $curlParameters->addHeader($contents);
-            break;
-          case 'u':
-          case 'user':
-            $credentials = explode(':', $flagContents);
-            $curlParameters->setUsername($credentials[0]);
-            $curlParameters->setPassword($credentials[1]);
-            break;
-          case 'data':
-          case 'data-ascii':
-          case 'd':
-          case 'data-raw':
-          case 'data-urlencode':
-          case 'data-binary':
-            if ($curlParameters->getHttpVerb() === 'GET') {
-              $curlParameters->setHttpVerb('POST');
-            }
-            $contents = trim(str_replace(["'", '\\'], '', $flagContents));
-            $curlParameters->setData($contents);
-            break;
-          case 'proxy':
-            $curlParameters->setProxy($flagContents);
-            break;
-          case 'url':
-            $curlParameters->setUrl($flagContents);
-            break;
-        }
+
+        $this->extractQuotedParams($curlParameters, $flagKey, $flagContents);
+
         $data = str_replace($flagKey . ' \'' . $flagContents . '\'', '', $data);
       }
     }
@@ -209,6 +150,49 @@ class CurlInput implements InputInterface
     }
 
     return $curlParameters;
+  }
+
+  /**
+   * Extract the arguments from a quoted parameter.
+   *
+   * @param CurlParametersInterface $curlParameters
+   *   The current object that implements CurlParametersInterface.
+   * @param string $flagKey
+   *   The flag key.
+   * @param string $flagContents
+   *   The flag contents.
+   */
+  protected function extractQuotedParams($curlParameters, $flagKey, $flagContents) {
+    switch ($flagKey) {
+      case 'H':
+      case 'header':
+      case 'headers':
+        $curlParameters->addHeader($flagContents);
+        break;
+      case 'u':
+      case 'user':
+        $credentials = explode(':', $flagContents);
+        $curlParameters->setUsername($credentials[0]);
+        $curlParameters->setPassword($credentials[1]);
+        break;
+      case 'data':
+      case 'data-ascii':
+      case 'd':
+      case 'data-raw':
+      case 'data-urlencode':
+      case 'data-binary':
+        if ($curlParameters->getHttpVerb() === 'GET') {
+          $curlParameters->setHttpVerb('POST');
+        }
+        $curlParameters->setData($flagContents);
+        break;
+      case 'proxy':
+        $curlParameters->setProxy($flagContents);
+        break;
+      case 'url':
+        $curlParameters->setUrl($flagContents);
+        break;
+    }
   }
 
 }
