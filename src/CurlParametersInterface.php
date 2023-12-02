@@ -62,10 +62,10 @@ interface CurlParametersInterface {
   /**
    * Get the data payload of the request.
    *
-   * @return null|string
+   * @return null|array
    *   The payload (or null if not set).
    */
-  public function getData(): ?string;
+  public function getData(): ?array;
 
   /**
    * Set the data payload of the request.
@@ -75,7 +75,17 @@ interface CurlParametersInterface {
    *
    * @return CurlParametersInterface
    */
-  public function setData(string $data): CurlParametersInterface;
+  public function setData(array $data): CurlParametersInterface;
+
+  /**
+   * Set an item of data.
+   *
+   * @param string $data
+   *   The data to set.
+   *
+   * @return CurlParametersInterface
+   */
+  public function addData(string $data): CurlParametersInterface;
 
   /**
    * Is data present in the object.

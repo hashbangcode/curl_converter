@@ -79,7 +79,7 @@ EOD;
     $curlParameters = $input->extract($curlString);
     $this->assertEquals('POST', $curlParameters->getHttpVerb());
     $this->assertEquals('https://www.example.com/example-from', $curlParameters->getUrl());
-    $this->assertStringContainsString('text=grfg&op=Rot13&form_build_id=form-F7yTHeY6UrAhh28TFR0ciNAXORC-uqg-ZVeflBPZ5O4&form_token=U4zfxzaKXfUFJzX63L1c4u3dmLu9jVnXMwYVruAxWY8&form_id=example-from', $curlParameters->getData());
+    $this->assertStringContainsString('text=grfg&op=Rot13&form_build_id=form-F7yTHeY6UrAhh28TFR0ciNAXORC-uqg-ZVeflBPZ5O4&form_token=U4zfxzaKXfUFJzX63L1c4u3dmLu9jVnXMwYVruAxWY8&form_id=example-from', $curlParameters->getData()[0]);
     $this->assertTrue($curlParameters->isInsecure());
     $headers = $curlParameters->getHeaders();
     $this->assertEquals('Connection: keep-alive', $headers[0]);
@@ -162,7 +162,7 @@ EOD;
     $this->assertEquals('POST', $curlParameters->getHttpVerb());
     $this->assertEquals(9, count($curlParameters->getHeaders()));
     $this->assertEquals('Origin: http://fiddle.jshell.net', $curlParameters->getHeaders()[0]);
-    $this->assertEquals('msg1=wow&msg2=such&msg3=data', $curlParameters->getData());
+    $this->assertEquals('msg1=wow&msg2=such&msg3=data', $curlParameters->getData()[0]);
   }
 
   public function testExtensiveCurlCommand() {
@@ -176,7 +176,7 @@ EOD;
     $this->assertEquals('password', $curlParameters->getPassword());
     $this->assertEquals('POST', $curlParameters->getHttpVerb());
     $this->assertEquals('Content-Type: application/json', $curlParameters->getHeaders()[0]);
-    $this->assertEquals('{"key1":"value1", "key2":"value2"}', $curlParameters->getData());
+    $this->assertEquals('{"key1":"value1", "key2":"value2"}', $curlParameters->getData()[0]);
     $this->assertEquals('http://proxy.example.com:8080', $curlParameters->getProxy());
     $this->assertEquals('https://example.com/api/resource', $curlParameters->getUrl());
   }
@@ -190,6 +190,41 @@ EOD;
 
     $this->assertEquals('https://www.example.com/test', $curlParameters->getUrl());
     $this->assertEquals('PUT', $curlParameters->getHttpVerb());
-    $this->assertEquals('somedata=123', $curlParameters->getData());
+    $this->assertEquals('somedata=123', $curlParameters->getData()[0]);
+  }
+
+  public function testCurlCommandWithDataFile() {
+    $curlString = 'curl -u "demo" -X POST -d @file1.txt -d @file2.txt https://example.com/upload';
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+
+    $this->assertEquals('https://example.com/upload', $curlParameters->getUrl());
+    $this->assertEquals('POST', $curlParameters->getHttpVerb());
+    $this->assertEquals('@file1.txt', $curlParameters->getData()[0]);
+  }
+
+  public function testMultiPartDataIsExtractedCorrectly() {
+    $curlString = <<<EOD
+curl -X POST https://www.example.com/test \
+     -u API_KEY:123 \
+     -d 'shipment[to_address][id]=adr_HrBKVA85' \
+     -d 'shipment[from_address][id]=adr_VtuTOj7o' \
+     -d 'shipment[parcel][id]=prcl_WDv2VzHp' \
+     -d 'shipment[is_return]=true' \
+     -d 'shipment[customs_info][id]=cstinfo_bl5sE20Y'
+EOD;
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+
+    $this->assertEquals('API_KEY', $curlParameters->getUsername());
+    $this->assertEquals('123', $curlParameters->getPassword());
+
+    $this->assertEquals('https://www.example.com/test', $curlParameters->getUrl());
+    $this->assertEquals('POST', $curlParameters->getHttpVerb());
+    $this->assertEquals('shipment[to_address][id]=adr_HrBKVA85', $curlParameters->getData()[0]);
+    $this->assertEquals('shipment[from_address][id]=adr_VtuTOj7o', $curlParameters->getData()[1]);
+    $this->assertEquals('shipment[parcel][id]=prcl_WDv2VzHp', $curlParameters->getData()[2]);
+    $this->assertEquals('shipment[is_return]=true', $curlParameters->getData()[3]);
+    $this->assertEquals('shipment[customs_info][id]=cstinfo_bl5sE20Y', $curlParameters->getData()[4]);
   }
 }

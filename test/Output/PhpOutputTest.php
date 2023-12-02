@@ -57,7 +57,7 @@ class PhpOutputTest extends TestCase
   {
     $curlParameters = new CurlParameters();
     $curlParameters->setUrl('https://www.hashbangcode.com/');
-    $curlParameters->setData('key=value');
+    $curlParameters->setData(['key' => 'value']);
 
     $phpOutput = new PhpOutput();
     $output = $phpOutput->render($curlParameters);

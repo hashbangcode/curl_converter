@@ -40,7 +40,14 @@ class CurlOutput implements OutputInterface
     }
 
     if ($curlParameters->hasData()) {
-      $output .= '--data \'' . $curlParameters->getData() . '\' ';
+      foreach ($curlParameters->getData() as $id => $data) {
+        if ($id) {
+          $output .= '--data \'' . $id . '=' . $data . '\' ';
+        }
+        else {
+          $output .= '--data \'' . $data . '\' ';
+        }
+      }
     }
 
     $output .= $curlParameters->getUrl();

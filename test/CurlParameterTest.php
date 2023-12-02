@@ -11,7 +11,7 @@ class CurlParameterTest extends TestCase
   {
     $curlParameters = new CurlParameters();
     $this->assertFalse($curlParameters->hasData());
-    $curlParameters->setData('key=value');
+    $curlParameters->setData(['key' => 'value']);
     $this->assertTrue($curlParameters->hasData());
   }
 
