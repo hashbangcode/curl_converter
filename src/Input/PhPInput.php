@@ -43,7 +43,7 @@ class PhPInput implements InputInterface
     }
 
     if (preg_match('/CURLOPT_POSTFIELDS,\s?[\'|"]?(.*?)([\'|"])?\)/', $data, $curloptUrl) == 1) {
-        $curlParameters->setData($curloptUrl[1]);
+        $curlParameters->addData($curloptUrl[1]);
         if ($curlParameters->getHttpVerb() === 'GET') {
           $curlParameters->setHttpVerb('POST');
         }

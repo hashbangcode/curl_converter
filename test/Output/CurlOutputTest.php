@@ -86,7 +86,7 @@ class CurlOutputTest extends TestCase
   public function testCurlDataIsOutput() {
     $curlParameters = new CurlParameters();
     $curlParameters->setUrl('https://www.hashbangcode.com/');
-    $curlParameters->setData('something=123');
+    $curlParameters->setData(['something' => '123']);
     $curlParameters->setHttpVerb('POST');
 
     $curlOutput = new CurlOutput();

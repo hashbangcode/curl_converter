@@ -25,9 +25,9 @@ class CurlParameters implements CurlParametersInterface
 
   /**
    * The data being sent to the request.
-   * @var string
+   * @var array
    */
-  protected $data;
+  protected $data = [];
 
   /**
    * The HTTP verb being used.
@@ -112,7 +112,7 @@ class CurlParameters implements CurlParametersInterface
   /**
    * {@inheritdoc}
    */
-  public function getData(): ?string
+  public function getData(): ?array
   {
     return $this->data;
   }
@@ -120,9 +120,18 @@ class CurlParameters implements CurlParametersInterface
   /**
    * {@inheritdoc}
    */
-  public function setData(string $data): CurlParametersInterface
+  public function setData(array $data): CurlParametersInterface
   {
     $this->data = $data;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addData(string $data): CurlParametersInterface
+  {
+    $this->data[] = $data;
     return $this;
   }
 
@@ -134,7 +143,7 @@ class CurlParameters implements CurlParametersInterface
     if ($this->getData() == NULL) {
       return FALSE;
     }
-    return (strlen($this->getData()) > 0) ?  TRUE : FALSE;
+    return (count($this->getData()) > 0) ?  TRUE : FALSE;
   }
 
   /**

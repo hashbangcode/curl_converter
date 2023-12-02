@@ -38,7 +38,7 @@ class PhpOutput implements OutputInterface
         $output .= 'curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "' . $curlParameters->getHttpVerb() . '");' . PHP_EOL;
     }
 
-    $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . $curlParameters->getData() . '");' . PHP_EOL;
+    $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . http_build_query($curlParameters->getData()) . '");' . PHP_EOL;
 
     $headers = $curlParameters->getHeaders();
     if (count($headers) > 0) {

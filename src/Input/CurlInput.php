@@ -61,7 +61,7 @@ class CurlInput implements InputInterface
           case 'user':
             $credentials = explode(':', $explodedFlag[1]);
             $curlParameters->setUsername($credentials[0]);
-            $curlParameters->setPassword($credentials[1]);
+            $curlParameters->setPassword($credentials[1] ?? '');
             $data = str_replace($explodedFlag[0] . ' ' . $explodedFlag[1], '', $data);
             break;
           case 'X':
@@ -76,6 +76,16 @@ class CurlInput implements InputInterface
           case 'proxy':
             $curlParameters->setProxy($explodedFlag[1]);
             $data = str_replace($explodedFlag[0] . ' ' . $explodedFlag[1], '', $data);
+            break;
+          case 'd':
+            if (substr_compare($explodedFlag[1], "'", 0, 1) === 0
+            || substr_compare($explodedFlag[1], '"', 0, 1) === 0) {
+              break;
+            }
+            if ($curlParameters->getHttpVerb() === 'GET') {
+              $curlParameters->setHttpVerb('POST');
+            }
+            $curlParameters->addData($explodedFlag[1]);
             break;
         }
 
@@ -172,7 +182,7 @@ class CurlInput implements InputInterface
       case 'user':
         $credentials = explode(':', $flagContents);
         $curlParameters->setUsername($credentials[0]);
-        $curlParameters->setPassword($credentials[1]);
+        $curlParameters->setPassword($credentials[1] ?? '');
         break;
       case 'data':
       case 'data-ascii':
@@ -183,7 +193,7 @@ class CurlInput implements InputInterface
         if ($curlParameters->getHttpVerb() === 'GET') {
           $curlParameters->setHttpVerb('POST');
         }
-        $curlParameters->setData($flagContents);
+        $curlParameters->addData($flagContents);
         break;
       case 'proxy':
         $curlParameters->setProxy($flagContents);
