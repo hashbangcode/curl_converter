@@ -42,7 +42,7 @@ class PhpOutput implements OutputInterface
     if ($curlParameters->hasData()) {
       switch ($curlParameters->getDataDataType()) {
         case CurlParameters::DATA_JSON:
-          $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . json_encode($curlParameters->getData()) . '");' . PHP_EOL;
+          $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . str_replace('"', '\"', json_encode($curlParameters->getData())) . '");' . PHP_EOL;
           break;
         case CurlParameters::DATA_STRING:
           $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . $curlParameters->getData() . '");' . PHP_EOL;
