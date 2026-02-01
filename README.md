@@ -71,3 +71,7 @@ without parsing the curl command input.
 ```
 
 The $result parameter now contains the PHP code for the curl request.
+
+## Examples
+
+- [The curl converter tool is currently in use on the #! code site.](https://www.hashbangcode.com/tools/curl-command)
