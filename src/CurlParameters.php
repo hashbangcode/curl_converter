@@ -12,6 +12,21 @@ namespace Hashbangcode\CurlConverter;
 class CurlParameters implements CurlParametersInterface
 {
   /**
+   * Data is of type JSON.
+   */
+  public const DATA_JSON = 'json';
+
+  /**
+   * Data is of type array.
+   */
+  public const DATA_ARRAY = 'array';
+
+  /**
+   * Data is of type string.
+   */
+  public const DATA_STRING = 'string';
+
+  /**
    * The url being used in the call.
    * @var string
    */
@@ -28,6 +43,12 @@ class CurlParameters implements CurlParametersInterface
    * @var array
    */
   protected $data = [];
+
+  /**
+   * The type of data in the data property.
+   * @var string
+   */
+  protected $dataType = self::DATA_STRING;
 
   /**
    * The HTTP verb being used.
@@ -122,6 +143,7 @@ class CurlParameters implements CurlParametersInterface
    */
   public function setData(array $data): CurlParametersInterface
   {
+    $this->setDataDataType(CurlParameters::DATA_ARRAY);
     $this->data = $data;
     return $this;
   }
@@ -138,12 +160,29 @@ class CurlParameters implements CurlParametersInterface
   /**
    * {@inheritdoc}
    */
+  public function setDataDataType(string $dataType): CurlParametersInterface
+  {
+    $this->dataType = $dataType;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDataDataType(): string
+  {
+    return $this->dataType;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function hasData(): bool
   {
     if ($this->getData() == NULL) {
       return FALSE;
     }
-    return (count($this->getData()) > 0) ?  TRUE : FALSE;
+    return (count($this->getData()) > 0) ? TRUE : FALSE;
   }
 
   /**
@@ -237,7 +276,7 @@ class CurlParameters implements CurlParametersInterface
   /**
    * {@inheritdoc}
    */
-  public function followRedirects() : bool
+  public function followRedirects(): bool
   {
     return $this->followRedirects;
   }

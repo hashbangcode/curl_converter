@@ -88,6 +88,24 @@ interface CurlParametersInterface {
   public function addData(string $data): CurlParametersInterface;
 
   /**
+   * Set the type of data present.
+   *
+   * @param string $dataType
+   *   The data type.
+   *
+   * @return CurlParametersInterface
+   */
+  public function setDataDataType(string $dataType): CurlParametersInterface;
+
+  /**
+   * The type of data present.
+   *
+   * @return string
+   *   The type of data.
+   */
+  public function getDataDataType(): string;
+
+  /**
    * Is data present in the object.
    *
    * @return bool

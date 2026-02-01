@@ -79,7 +79,7 @@ class CurlInput implements InputInterface
             break;
           case 'd':
             if (substr_compare($explodedFlag[1], "'", 0, 1) === 0
-            || substr_compare($explodedFlag[1], '"', 0, 1) === 0) {
+              || substr_compare($explodedFlag[1], '"', 0, 1) === 0) {
               break;
             }
             if ($curlParameters->getHttpVerb() === 'GET') {
@@ -118,7 +118,7 @@ class CurlInput implements InputInterface
                 $curlParameters->setHttpVerb('HEAD');
               }
               $data = str_replace($explodedFlag[0], '', $data);
-            break;
+              break;
           }
         }
       }
@@ -171,7 +171,8 @@ class CurlInput implements InputInterface
    * @param string $flagContents
    *   The flag contents.
    */
-  protected function extractQuotedParams($curlParameters, $flagKey, $flagContents) {
+  protected function extractQuotedParams($curlParameters, $flagKey, $flagContents)
+  {
     switch ($flagKey) {
       case 'H':
       case 'header':
@@ -193,7 +194,16 @@ class CurlInput implements InputInterface
         if ($curlParameters->getHttpVerb() === 'GET') {
           $curlParameters->setHttpVerb('POST');
         }
-        $curlParameters->addData($flagContents);
+
+        // Attempt to convert from JSON.
+        $jsonData = @json_decode($flagContents, true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+          $curlParameters->setData($jsonData);
+          $curlParameters->setDataDataType(CurlParameters::DATA_JSON);
+        } else {
+          $curlParameters->addData($flagContents);
+          $curlParameters->setDataDataType(CurlParameters::DATA_ARRAY);
+        }
         break;
       case 'proxy':
         $curlParameters->setProxy($flagContents);

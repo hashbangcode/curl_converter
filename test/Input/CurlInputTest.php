@@ -2,6 +2,7 @@
 
 namespace Hashbangcode\CurlConverter\Input\Test;
 
+use Hashbangcode\CurlConverter\CurlParameters;
 use PHPUnit\Framework\TestCase;
 use Hashbangcode\CurlConverter\Input\CurlInput;
 
@@ -141,7 +142,8 @@ EOD;
     $this->assertTrue($curlParameters->followRedirects());
   }
 
-  public function testCurlCopiedFromPostman() {
+  public function testCurlCopiedFromPostman()
+  {
     $curlString = <<<EOD
 curl --location --request POST 'http://fiddle.jshell.net/echo/html/' \
   --header 'Origin: http://fiddle.jshell.net' \
@@ -165,7 +167,8 @@ EOD;
     $this->assertEquals('msg1=wow&msg2=such&msg3=data', $curlParameters->getData()[0]);
   }
 
-  public function testExtensiveCurlCommand() {
+  public function testExtensiveCurlCommand()
+  {
     $curlString = <<<EOD
 curl -X POST -H "Content-Type: application/json" -d '{"key1":"value1", "key2":"value2"}' --insecure --user username:password --proxy http://proxy.example.com:8080 https://example.com/api/resource
 EOD;
@@ -176,12 +179,46 @@ EOD;
     $this->assertEquals('password', $curlParameters->getPassword());
     $this->assertEquals('POST', $curlParameters->getHttpVerb());
     $this->assertEquals('Content-Type: application/json', $curlParameters->getHeaders()[0]);
-    $this->assertEquals('{"key1":"value1", "key2":"value2"}', $curlParameters->getData()[0]);
     $this->assertEquals('http://proxy.example.com:8080', $curlParameters->getProxy());
     $this->assertEquals('https://example.com/api/resource', $curlParameters->getUrl());
+
+    $data = [
+      'key1' => 'value1',
+      'key2' => 'value2',
+    ];
+    $this->assertEquals($data, $curlParameters->getData());
   }
 
-  public function testSettingDataDoesNotChangeVerbToPost() {
+  public function testJsonDataCommand()
+  {
+    $curlString = <<<EOD
+curl -sSL -X POST https://www.example.com/api/resource -d '{"operationName":"getPastGroupEvents","variables":{"urlname":"test","beforeDateTime":"2026-01-30T08:12:37.288Z","after":"MzA3NjgxNTk3OjE3NDcxNTkyMDAwMDA="},"extensions":{"persistedQuery":{"version":1,"sha256Hash":""}}}'
+EOD;
+    $input = new CurlInput();
+    $curlParameters = $input->extract($curlString);
+
+    $this->assertEquals('POST', $curlParameters->getHttpVerb());
+    $this->assertEquals('https://www.example.com/api/resource', $curlParameters->getUrl());
+    $this->assertEquals(CurlParameters::DATA_JSON, $curlParameters->getDataDataType());
+    $data = [
+      'operationName' => 'getPastGroupEvents',
+      'variables' => [
+        'urlname' => 'test',
+        'beforeDateTime' => '2026-01-30T08:12:37.288Z',
+        'after' => 'MzA3NjgxNTk3OjE3NDcxNTkyMDAwMDA=',
+      ],
+      'extensions' => [
+        "persistedQuery" => [
+          'version' => 1,
+          'sha256Hash' => '',
+        ],
+      ],
+    ];
+    $this->assertEquals($data, $curlParameters->getData());
+  }
+
+  public function testSettingDataDoesNotChangeVerbToPost()
+  {
     $curlString = <<<EOD
 curl --request PUT 'https://www.example.com/test' --data 'somedata=123'
 EOD;
@@ -193,7 +230,8 @@ EOD;
     $this->assertEquals('somedata=123', $curlParameters->getData()[0]);
   }
 
-  public function testCurlCommandWithDataFile() {
+  public function testCurlCommandWithDataFile()
+  {
     $curlString = 'curl -u "demo" -X POST -d @file1.txt -d @file2.txt https://example.com/upload';
     $input = new CurlInput();
     $curlParameters = $input->extract($curlString);
@@ -203,7 +241,8 @@ EOD;
     $this->assertEquals('@file1.txt', $curlParameters->getData()[0]);
   }
 
-  public function testMultiPartDataIsExtractedCorrectly() {
+  public function testMultiPartDataIsExtractedCorrectly()
+  {
     $curlString = <<<EOD
 curl -X POST https://www.example.com/test \
      -u API_KEY:123 \

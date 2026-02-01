@@ -37,4 +37,21 @@ class CurlConverterTest extends TestCase
 
     $this->assertEquals($command, $converted);
   }
+
+  public function testCurlPostDataToPhP()
+  {
+    $command = <<<EOD
+curl -sSL -X POST https://www.example.com/api/resource -d '{"operationName":"getPastGroupEvents","variables":{"urlname":"test","beforeDateTime":"2026-01-30T08:12:37.288Z","after":"MzA3NjgxNTk3OjE3NDcxNTkyMDAwMDA="},"extensions":{"persistedQuery":{"version":1,"sha256Hash":""}}}'
+EOD;
+    $input = new CurlInput();
+    $output = new PhpOutput();
+
+    $converter = new CurlConverter($input, $output);
+    $converted = $converter->convert($command);
+
+    $this->assertIsString($converted);
+    $this->assertStringContainsString('<?php', $converted);
+    $this->assertStringContainsString('https://www.example.com/api/resource', $converted);
+    $this->assertStringContainsString('{"operationName":"getPastGroupEvents","variables":{"urlname":"test","beforeDateTime":"2026-01-30T08:12:37.288Z","after":"MzA3NjgxNTk3OjE3NDcxNTkyMDAwMDA="},"extensions":{"persistedQuery":{"version":1,"sha256Hash":""}}}', $converted);
+  }
 }

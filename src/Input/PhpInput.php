@@ -10,7 +10,7 @@ use Hashbangcode\CurlConverter\CurlParameters;
  *
  * @package Hashbangcode\CurlConverter\Input
  */
-class PhPInput implements InputInterface
+class PhpInput implements InputInterface
 {
   /**
    * {@inheritDoc}

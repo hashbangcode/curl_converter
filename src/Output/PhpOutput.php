@@ -2,6 +2,7 @@
 
 namespace Hashbangcode\CurlConverter\Output;
 
+use Hashbangcode\CurlConverter\CurlParameters;
 use Hashbangcode\CurlConverter\CurlParametersInterface;
 
 /**
@@ -38,7 +39,20 @@ class PhpOutput implements OutputInterface
         $output .= 'curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "' . $curlParameters->getHttpVerb() . '");' . PHP_EOL;
     }
 
-    $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . http_build_query($curlParameters->getData()) . '");' . PHP_EOL;
+    if ($curlParameters->hasData()) {
+      switch ($curlParameters->getDataDataType()) {
+        case CurlParameters::DATA_JSON:
+          $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . json_encode($curlParameters->getData()) . '");' . PHP_EOL;
+          break;
+        case CurlParameters::DATA_STRING:
+          $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . $curlParameters->getData() . '");' . PHP_EOL;
+          break;
+        case CurlParameters::DATA_ARRAY:
+        default:
+          $output .= 'curl_setopt($curl_handle, CURLOPT_POSTFIELDS, "' . http_build_query($curlParameters->getData()) . '");' . PHP_EOL;
+          break;
+      }
+    }
 
     $headers = $curlParameters->getHeaders();
     if (count($headers) > 0) {

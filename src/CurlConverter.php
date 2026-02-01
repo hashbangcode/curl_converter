@@ -39,7 +39,7 @@ class CurlConverter
    * @param OutputInterface $output
    *   The output interface.
    */
-  public function __construct(InputInterface $input = null, OutputInterface $output = null)
+  public function __construct(InputInterface $input = nullable, OutputInterface $output = nullable)
   {
     if ($input !== null) {
       $this->input = $input;
@@ -60,7 +60,8 @@ class CurlConverter
    *
    * @throws \Exception
    */
-  public function convert(string $input) {
+  public function convert(string $input)
+  {
     if ($this->input === null) {
       throw new \Exception('Input object is not set!');
     }

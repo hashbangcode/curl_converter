@@ -2,7 +2,7 @@
 
 namespace Hashbangcode\CurlConverter\Input\Test;
 
-use Hashbangcode\CurlConverter\Input\PhPInput;
+use Hashbangcode\CurlConverter\Input\PhpInput;
 use PHPUnit\Framework\TestCase;
 
 class PhPInputTest extends TestCase
@@ -11,7 +11,7 @@ class PhPInputTest extends TestCase
   {
     $this->expectException('InvalidArgumentException');
     $notCurlString = 'dfhgldkfhgslkfdjg';
-    $input = new PhPInput();
+    $input = new PhpInput();
     $curlParameters = $input->extract($notCurlString);
   }
 
@@ -31,7 +31,7 @@ if (curl_errno($curl_handle)) {
 curl_close($curl_handle);
 echo $result;%  
 ';
-    $input = new PhPInput();
+    $input = new PhpInput();
     $curlParameters = $input->extract($curlString);
     $this->assertEquals('https://www.example.com/example-from', $curlParameters->getUrl());
     $this->assertEquals(true, $curlParameters->isInsecure());
